@@ -998,37 +998,52 @@ export default {
 .alarm-modal-video {
   display: flex;
   justify-content: center;
+  align-items: stretch;          /* 让子元素纵向撑满 */
   background: #000;
   cursor: pointer;
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 50vh;                  /* 固定高度，确保有足够空间显示视频 */
+  min-height: 360px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .alarm-modal-video img {
-  max-width: 100%;
-  max-height: 50vh;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;           /* 保持比例完整显示，不裁剪 */
   /* 旋转由 prop 控制，通过 :style 动态绑定 */
 }
 
 /* WebRTC 实时视频流样式 */
 .alarm-modal-video .alarm-webrtc-cell {
   width: 100%;
-  max-height: 50vh;
+  height: 100%;                  /* 撑满父级 .alarm-modal-video */
+  max-height: none;
   border: none;
   border-radius: 0;
   aspect-ratio: auto;
+  display: block;
+}
+
+.alarm-modal-content.fullscreen .alarm-modal-video {
+  height: auto;                  /* 全屏由 flex:1 自动撑满剩余高度 */
+  max-height: none;
+  flex: 1 1 auto;
 }
 
 .alarm-modal-content.fullscreen .alarm-modal-video .alarm-webrtc-cell {
-  max-height: 95vh;
+  width: 100%;
   height: 100%;
+  max-height: none;
 }
 
 .alarm-modal-content.fullscreen .alarm-modal-video img {
-  max-height: 95vh;
   width: 100%;
   height: 100%;
+  object-fit: contain;           /* 保持比例完整显示 */
   /* 旋转由 prop 控制，通过 :style 动态绑定 */
 }
 

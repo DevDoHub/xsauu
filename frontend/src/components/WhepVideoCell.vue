@@ -299,20 +299,45 @@ export default {
           color = colorForLabel(box.label);
         }
 
+        // 边缘留缝：避免检测框直接顶到 canvas 边缘，导致标签无处展示
+        const EDGE_PAD = 2;       // 框线距 canvas 边缘的最小留白
+        const LABEL_H = 16;       // 标签背景高度
+        const LABEL_PAD = 4;      // 标签横向内边距
+
+        // 夹住框的位置，让框始终留在 canvas 内 + 边缘留缝
+        let bx = Math.max(EDGE_PAD, x);
+        let by = Math.max(EDGE_PAD, y);
+        let bw = Math.min(w, canvas.width - bx - EDGE_PAD);
+        let bh = Math.min(h, canvas.height - by - EDGE_PAD);
+        if (bw < 1 || bh < 1) return;  // 框太小或在视野外，跳过
+
         // 绘制边框
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, w, h);
+        ctx.strokeRect(bx, by, bw, bh);
 
-        // 绘制标签背景
+        // 计算标签位置：默认放在框上方；若顶部空间不足则放框内顶部
         ctx.font = '12px Arial';
         const textWidth = ctx.measureText(labelText).width;
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y - 16, textWidth + 8, 16);
+        const bgWidth = textWidth + LABEL_PAD * 2;
 
-        // 绘制标签文字
+        // 横向：让标签整体始终落在 canvas 可见区内（留 EDGE_PAD 缝）
+        let labelX = Math.max(EDGE_PAD, Math.min(bx, canvas.width - bgWidth - EDGE_PAD));
+        // 纵向：上方放得下就放上方，否则放框内顶部
+        let labelY;          // 标签背景的 top
+        if (by - LABEL_H >= EDGE_PAD) {
+          labelY = by - LABEL_H;
+        } else {
+          labelY = by + EDGE_PAD;   // 放在框内顶部，留 2px 缝
+        }
+
+        // 绘制标签背景
+        ctx.fillStyle = color;
+        ctx.fillRect(labelX, labelY, bgWidth, LABEL_H);
+
+        // 绘制标签文字（基线在 LABEL_H - 4 = 12px 处，正好垂直居中）
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(labelText, x + 4, y - 4);
+        ctx.fillText(labelText, labelX + LABEL_PAD, labelY + LABEL_H - 4);
       });
       
       animationFrame = requestAnimationFrame(drawDetections);
@@ -393,7 +418,7 @@ export default {
 video {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;          /* 保持视频比例完整显示，避免裁剪和变形 */
   display: block;
   background: #000;
   /* 旋转由 prop 控制，通过 :style 动态绑定 */
