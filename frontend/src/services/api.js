@@ -51,8 +51,11 @@ http.interceptors.response.use(
 // 不会再抛异常 —— 拦截器把失败也包装成 resolved 值。
 
 // 极少数端点后端用 ``{ data: ... }`` 双层包装，调用方期望直接拿到内层。
-const unwrapData = (res) =>
-  res.error ? res : { ...res, data: res.data?.data };
+// 注意：http.get(...) 返回 Promise，必须先 await 再解包，否则会把 Promise 当对象 spread。
+const unwrapData = async (resPromise) => {
+  const res = await resPromise;
+  return res.error ? res : { ...res, data: res.data?.data };
+};
 
 // ── 设备 ─────────────────────────────────────────────────────────────
 export const deviceApi = {

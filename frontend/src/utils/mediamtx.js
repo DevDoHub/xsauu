@@ -5,12 +5,28 @@
 
 /**
  * 获取 mediamtx WebRTC 基地址
- * 开发环境通过代理，生产环境根据实际部署配置
+ *
+ * WHEP 协议必须**直连** mediamtx，不能走 Vite proxy（涉及 ICE/UDP）。
+ * 所以这里用「当前页面的 hostname + 8889」拼地址：
+ *   - 电脑本机访问 http://localhost:5173 → http://localhost:8889
+ *   - 手机/局域网访问 http://192.168.x.x:5173 → http://192.168.x.x:8889
+ * 这样无需为每台终端单独配 .env。
+ *
+ * 也允许用 VITE_MEDIAMTX_URL 显式覆盖（如部署到带域名的环境）。
+ *
+ * @returns {string} mediamtx WebRTC 服务基地址（不含末尾斜杠）
  */
 export function getMediamtxBaseUrl() {
-  // 直接访问 mediamtx 的 WebRTC 端口（8889）
-  // WHEP 协议需要直接连接，不能通过代理
-  return import.meta.env.VITE_MEDIAMTX_URL || 'http://localhost:8889';
+  if (import.meta.env.VITE_MEDIAMTX_URL) {
+    return import.meta.env.VITE_MEDIAMTX_URL;
+  }
+  // 浏览器环境下用当前页面的 hostname，避免硬编码 localhost
+  if (typeof window !== 'undefined' && window.location?.hostname) {
+    const { protocol, hostname } = window.location;
+    // mediamtx WHEP 默认 HTTP(8889) / HTTPS(8889 也可，按部署而定）
+    return `${protocol}//${hostname}:8889`;
+  }
+  return 'http://localhost:8889';
 }
 
 /**

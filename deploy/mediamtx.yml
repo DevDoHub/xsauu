@@ -1,0 +1,80 @@
+# mediamtx PoC 配置 —— 验证 "RTSP 入 → mediamtx → WebRTC(WHEP)/HLS 出" 视频链路
+# 对应 DESIGN.md §5.1 重流链路。本配置用于本机验证，生产再按勘网结果调整。
+
+logLevel: info
+logDestinations: [stdout]
+
+###############################################
+# 控制 API（前端监控墙用它自动列出在线摄像头）
+###############################################
+api: yes
+apiAddress: :9997
+
+# 开发环境：放开内置用户权限，允许匿名访问 API/读/写/录制回放。
+# 生产务必收紧（按 device_id 做 ACL，见 DESIGN.md §7）。
+authInternalUsers:
+  - user: any
+    permissions:
+      - action: publish
+      - action: read
+      - action: playback
+      - action: api
+      - action: metrics
+      - action: pprof
+
+###############################################
+# 协议端口
+###############################################
+# RTSP：既用于"摄像头/合成流"推入，也用于回拉验证
+rtsp: yes
+rtspAddress: :8554
+rtspTransports: [tcp]
+
+# HLS：纯 HTTP 输出，作为兜底 & 验证最稳的通道
+hls: yes
+hlsAddress: :8888
+hlsAlwaysRemux: no
+hlsVariant: lowLatency
+
+# WebRTC(WHEP)：前端 <video> 直连的主通道
+webrtc: yes
+webrtcAddress: :8889
+# webrtcAdditionalHosts：追加给浏览器的 ICE host 候选地址。
+# 留空时 mediamtx 自动用容器内可见的接口地址做候选；再叠加下面的
+# webrtcIPsFromInterfaces=yes，host 端的真实网卡 IP 也会被广播出去，
+# 所以无需手工维护一份 IP 白名单（电脑 / 手机 / 局域网都能连）。
+webrtcAdditionalHosts: []
+webrtcIPsFromInterfaces: yes
+# 固定一个 UDP 端口做本地 ICE 候选，便于 docker 端口映射
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: :8189
+
+# 关闭未使用协议，缩小故障面
+rtmp: no
+srt: no
+
+###############################################
+# 路径（path）定义
+###############################################
+paths:
+  # ⚠️ 不在这里静态定义设备 path！
+  # 设备 path 由后端在收到边缘端注册（device_register / camera_url）时，
+  # 通过 mediamtx REST API（POST /v3/config/paths/add/{name}）动态写入。
+  # 详见 backend/app/services/mediamtx.py: register_camera_path()
+  #
+  # 这样的好处：
+  #   1. 不需要每加一台摄像头就改配置文件
+  #   2. RTSP 地址变化（更换设备/换 IP）时立即生效
+  #   3. 与数据库 device 表保持一致
+
+  # --- 兜底：允许任意未定义的 path 由外部 publisher 推入（开发/测试用）---
+  # ⚠️ 生产环境应禁用此项，改为按 device_id 白名单
+  all_others:
+    source: publisher
+
+  # --- 真实摄像头：mediamtx 主动拉流 ---
+  # cam-238:
+  #   source: rtsp://admin:%40Chensavvy2008@192.168.238.63:554/Streaming/Channels/101
+  #   sourceOnDemand: yes
+  #   sourceOnDemandStartTimeout: 10s
+  #   sourceOnDemandCloseAfter: 10s

@@ -1,0 +1,27 @@
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: mediamtx
+    restart: unless-stopped
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml:ro
+    ports:
+      - "8554:8554"      # RTSP (TCP)
+      - "8888:8888"      # HLS  (HTTP)
+      - "8889:8889"      # WebRTC/WHEP (HTTP signaling)
+      - "8189:8189/udp"  # WebRTC ICE (UDP)
+      - "8189:8189/tcp"  # WebRTC ICE (TCP 兜底)
+      - "9997:9997"      # 控制 API
+
+  # mosquitto:
+  #   image: eclipse-mosquitto:2
+  #   container_name: mosquitto
+  #   restart: unless-stopped
+  #   ports:
+  #     - "1883:1883"      # MQTT
+  #   volumes:
+  #     - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+  #     - mosquitto_data:/mosquitto/data
+
+volumes:
+  mosquitto_data:

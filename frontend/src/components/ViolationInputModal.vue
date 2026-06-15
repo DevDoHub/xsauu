@@ -3,18 +3,19 @@
     <div class="violation-modal">
       <div class="modal-header">
         <h3>远程报警</h3>
-        <button class="close-btn" @click="$emit('cancel')">×</button>
+        <button type="button" class="close-btn" @click="$emit('cancel')">×</button>
       </div>
 
-      <!-- 报警类型选择 -->
+      <!-- 报警类型选择（仅选择，不触发报警） -->
       <div class="section">
         <label class="section-label">选择报警类型</label>
         <div class="type-grid">
           <button
+            type="button"
             v-for="item in alarmTypes"
             :key="item.key"
             :class="['type-btn', { active: selectedType === item.key }]"
-            @click="selectedType = item.key"
+            @click.stop.prevent="selectType(item.key)"
           >
             <span class="type-icon">{{ item.icon }}</span>
             <span class="type-name">{{ item.label }}</span>
@@ -22,15 +23,16 @@
         </div>
       </div>
 
-      <!-- 严重级别 -->
+      <!-- 严重级别（仅选择，不触发报警） -->
       <div class="section">
         <label class="section-label">严重级别</label>
         <div class="severity-row">
           <button
+            type="button"
             v-for="s in severities"
             :key="s.value"
             :class="['sev-btn', s.value, { active: selectedSeverity === s.value }]"
-            @click="selectedSeverity = s.value"
+            @click.stop.prevent="selectSeverity(s.value)"
           >{{ s.label }}</button>
         </div>
       </div>
@@ -41,10 +43,10 @@
         <textarea v-model="description" placeholder="请输入违规详情..." rows="3"></textarea>
       </div>
 
-      <!-- 操作按钮 -->
+      <!-- 操作按钮：只有这里的「确认报警」才会真正触发报警 -->
       <div class="actions">
-        <button class="btn-cancel" @click="$emit('cancel')">取消</button>
-        <button class="btn-confirm" :disabled="!selectedType" @click="handleConfirm">确认报警</button>
+        <button type="button" class="btn-cancel" @click="$emit('cancel')">取消</button>
+        <button type="button" class="btn-confirm" :disabled="!selectedType" @click="handleConfirm">确认报警</button>
       </div>
     </div>
   </div>
@@ -96,6 +98,15 @@ export default {
     },
   },
   methods: {
+    /** 仅选择报警类型，不触发报警 */
+    selectType(key) {
+      this.selectedType = key;
+    },
+    /** 仅选择严重级别，不触发报警 */
+    selectSeverity(value) {
+      this.selectedSeverity = value;
+    },
+    /** 唯一的报警入口：用户点击「确认报警」时才 emit */
     handleConfirm() {
       if (!this.selectedType) return;
       const typeObj = this.alarmTypes.find(t => t.key === this.selectedType);

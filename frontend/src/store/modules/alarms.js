@@ -160,37 +160,20 @@ export default {
 
     /**
      * 带违规信息的报警触发
-     * @param {Object} payload - 包含 deviceId, violationType, violationDetail
+     *
+     * ⚠️ 不再在此处本地 push 报警条目：
+     * 后端创建报警后会通过 SSE 广播（applyAlarmStreamPush 是唯一事实来源），
+     * 在这里再用客户端本地时间临时 push 一条，会因 time 字段不一致而无法和
+     * SSE 推送的同一条记录去重，导致"最新报警事件"列表出现两条重复项。
+     *
+     * @param {Object} payload - 包含 deviceId, alarmType, alarmTypeLabel, severity, description, image, note, type, type2
      */
-    async triggerAlarmWithViolation({ commit, dispatch, state }, { deviceId, alarmType, alarmTypeLabel, severity, description, image, note, type, type2 }) {
+    async triggerAlarmWithViolation({ dispatch }, { deviceId, alarmType, alarmTypeLabel, severity, description, image, note, type, type2 }) {
       const result = await alarmApi.triggerWithViolation(deviceId, { alarmType, severity, description, image, note, type, type2 });
 
       if (!result.error) {
-        // 立即刷新报警状态
+        // 仅刷新报警状态（红色闪烁/小红点等），列表条目由 SSE 推送统一负责
         await dispatch('fetchAlarmStatus');
-
-        // 将远程报警立即加入"最新报警事件"列表（不等待下一次 fetchStream）
-        const data = result.data || {};
-        const now = new Date();
-        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        const newAlarm = {
-          image: image || '',
-          index: String(deviceId),
-          note: note || description || '手动报警',
-          type: type || alarmTypeLabel || '手动报警',
-          type2: type2 || '手动报警',
-          deviceManager: '',
-          areaManager: '',
-          areaManagerPhone: '',
-          time: timeStr,
-        };
-        // 去重：避免重复添加
-        const exists = state.alarmList.some(
-          (a) => a.index === newAlarm.index && a.time === newAlarm.time
-        );
-        if (!exists) {
-          commit('ADD_ALARM', newAlarm);
-        }
       }
 
       return result;

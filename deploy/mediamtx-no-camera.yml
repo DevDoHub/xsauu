@@ -1,0 +1,53 @@
+###############################################
+# 边缘端 mediamtx 配置（B 端 / 192.168.3.8）
+#
+# 职责：仅作为后端 A 的 mediamtx 的 RTSP 上游
+#       path 100% 由 tripod_pro 通过 REST API 动态注册
+#       不需要 WebRTC / HLS / publisher 兜底
+###############################################
+logLevel: info
+logDestinations: [stdout]
+
+###############################################
+# 控制 API（tripod_pro 通过它动态注册 path）
+###############################################
+api: yes
+apiAddress: 127.0.0.1:19998   # 仅本机访问，外部不可达更安全
+
+# ⚠️ 启动 tripod_pro 前必须导出与此一致的端口：
+#    export SAFESAU_EDGE_MTX_API="http://127.0.0.1:19998"
+
+# 开发期允许匿名；生产建议改为 user/pass
+authInternalUsers:
+  - user: any
+    permissions:
+      - action: publish
+      - action: read
+      - action: api
+
+###############################################
+# 协议端口：只开 RTSP（给后端 A 的 mediamtx 拉流）
+###############################################
+rtsp: yes
+rtspAddress: :18555
+rtspTransports: [tcp]    # 海康必须 TCP
+
+# 关掉所有用不到的协议，缩小故障面 & 减少端口占用
+hls: no
+webrtc: no
+rtmp: no
+srt: no
+
+###############################################
+# 路径（path）定义：留空 —— 全部由 tripod_pro 动态注册
+###############################################
+paths: {}
+  # ⚠️ 不在这里静态定义任何 path：
+  #   - tripod_pro 启动时通过 REST API 注册：
+  #       PATCH /v3/config/paths/patch/{device_name}
+  #     源码: tripod_pro/network/edge_mediamtx.py
+  #   - 进程退出时反注册：
+  #       DELETE /v3/config/paths/delete/{device_name}
+  #
+  # ⚠️ 不要保留 all_others: source: publisher
+  #   那是安全风险（任何人可推流），且边缘端用不到 publisher 流。
