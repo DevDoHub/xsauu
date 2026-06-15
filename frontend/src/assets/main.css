@@ -1,0 +1,1002 @@
+body, html {
+  background-color: #000000c4; /* 设置全局背景色 */
+  background-size: cover;
+}
+.header1 {
+
+       height: 50px; /* 设置长条的高度 */
+        width: 100%; /* 让长条占满整个宽度 */
+      }
+
+.header {
+  display: flex;
+  position: relative;
+  height: 100px; /* 设置长条的高度 */
+  width: 100%; /* 让长条占满整个宽度 */
+  background-image: url('../assets/img/7.jpg'); /* 替换 'path/to/your/image.jpg' 为你图片的实际路径 */
+  background-size: 25% auto; /* 放大背景图片的宽度，并自动调整高度以保持比例 */
+  background-position: left top; /* 将图片在元素内靠左显示，并对齐顶部 */
+  background-repeat: no-repeat; /* 防止背景图片重复 */
+  padding: 2px; /* 设置内边距 */
+}
+
+.header::after {
+  content: "核工厂智能安全监测系统";
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  padding: 12px 20px; /* 增加内边距 */
+  font-size: 40px;
+  font-weight: bold; /* 加粗标题 */
+  font-family: 'Microsoft YaHei', 'Segoe UI', 'PingFang SC', sans-serif; /* 更换字体 */
+  color: rgb(255, 255, 255);
+  
+  /* 背景优化：深色半透明磨砂效果 */
+  background-color: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(5px); /* 磨砂质感 */
+  border-radius: 10px;
+
+
+
+}
+
+
+.spacer {
+  flex-grow: 1; /* 占用左侧80% */
+}
+.data-display {
+  color: white;
+  text-align: left; /* 将文字左对齐 */
+  white-space: pre-wrap; /* 保留换行符 */
+  margin: 0; /* 清除默认外边距 */
+  padding: 10px; /* 设置内边距 */
+  border: 2px solid rgb(183, 179, 179); /* 添加白色边框 */
+  border-radius: 10px; /* 设置圆角 */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* 添加阴影 */
+  width: 290px; /* 只占header的右侧20% */
+  box-sizing: border-box; /* 确保padding和border包含在宽度内 */
+  margin-bottom: 5px;
+  margin-right: 5px;
+  height: 100px; /* 设置固定高度 */
+  overflow-y: auto; /* 添加垂直滚动条 */
+}
+.data-display::-webkit-scrollbar {
+  width: 0; /* 隐藏滚动条 */
+  background: transparent; /* 防止轨道颜色闪烁 */
+}
+
+.data-display:hover::-webkit-scrollbar {
+  width: 10px; /* 悬停时显示滚动条 */
+}
+
+.data-display::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5); /* 滚动条滑块颜色 */
+  border-radius: 5px; /* 滚动条滑块圆角 */
+}
+
+/* 自定义边框样式 */
+.custom-border-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background-color: rgba(13, 19, 33, 0.8);
+  box-shadow: 0 0 10px rgb(89, 89, 89);
+  overflow: hidden;
+}
+
+.custom-border-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgb(89, 89, 89);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.custom-border-box::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 1px solid rgb(89, 89, 89);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* 反转效果的边框 */
+.custom-border-box.reverse {
+  background-color: rgba(13, 19, 33, 0.8);
+}
+
+.custom-border-box.reverse::before {
+  border-color: rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.custom-border-box.reverse::after {
+  border-color: rgba(255, 0, 0, 0.3);
+}
+
+/* 添加一些动画效果 */
+.custom-border-box {
+  transition: all 0.3s ease;
+}
+
+.custom-border-box:hover {
+  box-shadow: 0 0 15px rgba(0, 149, 255, 0.7);
+}
+
+.custom-border-box.reverse:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+
+      
+.container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 50px); /* 让容器高度占据除去头部高度之外的剩余空间 */
+}
+
+.left, .center, .right {
+  height: 100%; /* 或者根据需要设置高度 */
+  margin: 0 10px; /* 设置左右间距为10px，可以根据需要调整 */
+}
+
+.left-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+}
+
+.left {
+  height: 100%;
+	width: 360px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.left.collapsed {
+  width: 0;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  left: 360px; /* 初始位置在展开的侧边栏右侧 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  border-radius: 0 5px 5px 0;
+  transition: left 0.3s ease;
+}
+
+.left.collapsed + .sidebar-toggle {
+  left: 0; /* 侧边栏收起时按钮移到最左侧 */
+}
+
+
+.center {
+	flex: 60%; /* 中间区域宽度占比60% */
+
+}
+
+.right {
+	flex: 15%; /* 右侧区域宽度占比20% */
+  min-width: 250px;
+}
+
+.my-style{
+  position: absolute;
+  height: 270px;
+  width: 850px;
+  left:  2px;
+  top: 58px;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  z-index: 999;
+
+}
+.my-style label{
+  width: 100px;
+}
+.my-style input{
+  width: calc(100% - 102px);
+}
+
+.my-style-s{
+  position: absolute;
+  height: 80px;
+  width: 850px;
+  left:  2px;
+  top: 58px;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  z-index: 999;
+
+}
+.my-style-s label{
+  width: 100px;
+}
+.my-style-s input{
+  width: calc(100% - 102px);
+}
+
+.oneline{
+  display: flex;
+  justify-content: left;
+  padding: 5px 20px;
+  margin-bottom: 10px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 居中对齐 */
+  justify-content: center; /* 垂直方向居中 */
+  height: 90vh; /* 设置父容器高度为视窗高度的90%，留出10%的空间 */
+  position: relative; /* 使用相对定位 */
+  top: 10%; /* 垂直方向上向下偏移10% */
+}
+
+.input-group {
+  margin-bottom: 10px; /* 输入框之间的间距 */
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+
+ul li {
+  color: white;
+}
+ul li div ul li {
+  color: white;
+}
+
+
+.connected {
+  color: #555;
+}
+
+.disconnected {
+  color: #333;
+}
+
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0px;
+  background-image: url("../assets/img/2.jpg");
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+}
+
+.form-row {
+  margin-bottom: 30px;
+}
+
+.form-container {
+  padding: 60px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  backdrop-filter: blur(5px); /* 添加背景模糊效果 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4); /* 添加阴影效果 */
+}
+
+.account-input,
+.password-input,
+.login-button {
+  padding: 10px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login-button {
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+}
+
+.grid2 img {
+  width: 100%;
+  height: auto;
+}
+
+.grid2 .selected {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  z-index: 2;
+}
+
+.video-container {
+  padding: 20px;
+}
+
+.button-container {
+  display: flex;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px; /* 适当调整容器最大宽度以使按钮看起来更长 */
+  height: 30px; /* 适当调整容器高度以使按钮看起来更窄 */
+}
+
+.my-btn-container{
+  position: absolute;
+  bottom: 11px;
+  left: 55%;
+  transform:translateX(-50%);
+}
+
+.button-container .button {
+  flex: 1;
+  padding: 0;
+  background-color: #555;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: background-color 0.3s;
+  outline: none;
+  border-radius: 0; /* 确保按钮没有圆角，基础状态 */
+}
+
+.button-container .button:not(:last-child) {
+  margin-right: -1px; /* 消除按钮之间的间隙 */
+}
+
+.button-container .button:hover {
+  background-color: #666;
+}
+
+.button-container .button.active {
+  background-color: #777; /* 活跃状态颜色 */
+}
+
+.button-container .button.one-corner {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.button-container .button.nine-corner {
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.button-container .extra-controls {
+  display: flex;
+}
+
+.extra-controls {
+  display: flex;
+  justify-content: flex-end; /* 移动到右边 */
+  gap: 10px; /* 按钮之间的间距 */
+}
+
+.extra-controls .extra-button {
+  padding: 0 10px;
+  background-color: #555; /* 调整附加按钮背景颜色 */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: background-color 0.3s;
+  outline: none;
+  border-radius: 5px; /* 调整附加按钮圆角 */
+  margin-top: 5px;
+}
+
+.extra-controls .extra-button:hover {
+  background-color: #666;
+}
+.grid {
+  display: grid;
+  grid-gap: 10px;
+}
+
+.grid.one {
+  grid-template-columns: 1fr;
+}
+
+.grid.four {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid.nine {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid img {
+  width: 100%;
+  height: auto;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 40px; /* 增加内边距 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-width: 100%; /* 限制最大宽度 */
+  max-height: 100%; /* 限制最大高度 */
+  overflow: auto; /* 内容溢出时滚动 */
+}
+
+.modal img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px; /* 增加图片和按钮之间的距离 */
+}
+
+.modal button {
+  display: block;
+  margin: 10px auto 0;
+  padding: 15px 30px; /* 增加按钮的内边距 */
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px; /* 增大按钮字体 */
+  border-radius: 5px; /* 圆角按钮 */
+  transition: background-color 0.3s; /* 增加过渡效果 */
+}
+
+.modal button:hover {
+  background-color: #0056b3;
+}
+.modal2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal2 img {
+  max-width: 65%;
+  max-height: 65%;
+}
+
+.modal2 button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 500px;
+}
+
+
+
+.form-style {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-top: 5px;
+  width: 95%; /* 调整宽度 */
+
+  grid-template-columns: 0.7fr 2fr; /* 使用grid布局，设定名称和输入框比例 */
+
+}
+
+.form-style label {
+  margin-bottom: 5px;
+  display: inline-block; /* 将输入名字和输入框在同一行显示 */
+  color: white; /* 将输入名字改为白色 */
+}
+
+.form-style input {
+  /* width: 85%; /* 调整输入框宽度 */
+  /* padding: 5px; */
+  /* margin: 0 0 10px 10px; */ 
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.form-style select{
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-container2 {
+  text-align: center;
+}
+
+.custom-button {
+  padding: 5px 10px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 40%;
+}
+
+.custom-button + .custom-button {
+  margin-left: 10px;
+}
+
+.custom-button:hover {
+  background-color: #ccc;
+}
+
+
+
+
+.person-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.person-list > li {
+  margin-bottom: 5px;
+}
+
+.person-name {
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  width: 80px;
+  text-align: center;
+  
+  
+}
+
+.person-name.expanded {
+  font-weight: bold;
+  background-color: #333;
+  color: white;
+}
+
+.device-list {
+  list-style-type: none;
+  padding: 5px 0 0 20px;
+}
+
+.device-list > li {
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.device-name {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.device-status {
+  margin-left: 10px;
+}
+
+.connected {
+  border: 1px solid white;
+  color: white;
+}
+
+.disconnected {
+  border: 1px solid #555;
+  color: #555;
+}
+
+.dropdown {
+  margin-top: 5px;
+  background: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.control-buttons {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 50px); /* 3列布局 */
+  grid-template-rows: repeat(3, 50px); /* 3行布局 */
+  gap: 2px; /* 控制按钮间距 */
+  justify-items: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.control-buttons > li {
+  cursor: pointer;
+  background: #555;
+  color: white;
+  width: 50px; /* 固定宽度 */
+  height: 50px; /* 固定高度 */
+  border-radius: 3px;
+  transition: background-color 0.3s;
+  text-align: center;
+  display: flex; /* 使用flexbox居中对齐内容 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.control-buttons > li:hover {
+  background-color: #666;
+}
+
+.control-buttons .up {
+  grid-column: 2 / 3; /* 第二列 */
+  grid-row: 1 / 2; /* 第一行 */
+}
+
+.control-buttons .down {
+  grid-column: 2 / 3; /* 第二列 */
+  grid-row: 3 / 4; /* 第三行 */
+}
+
+.control-buttons .mleft {
+  grid-column: 1 / 2; /* 第一列 */
+  grid-row: 2 / 3; /* 第二行 */
+  height: 50px; /* 固定高度 */
+  width: 50px;
+}
+
+.control-buttons .mright {
+  grid-column: 3 / 4; /* 第三列 */
+  grid-row: 2 / 3; /* 第二行 */
+  height: 50px; /* 固定高度 */
+  width: 50px;
+}
+
+.control-buttons .confidence-threshold {
+  grid-column: 4 / 4; /* 第三列 */
+  grid-row: 0 / 3; /* 第二行 */
+  height: 50px; /* 固定高度 */
+  width: 50px;
+}
+
+.control-buttons .zoom-in {
+  grid-column: 1 / 2; /* 第二列 */
+  grid-row: 3 / 4; /* 第一行 */
+  border-bottom-left-radius: 15px;/* 左下角加个弧度 */
+}
+
+.control-buttons .zoom-out {
+  grid-column: 3 / 4; /* 第二列 */
+  grid-row: 3 / 4; /* 第一行 */
+  border-bottom-right-radius: 15px;/* 右下角加个弧度 */
+}
+
+.control-buttons .reconnect,
+.control-buttons .disconnect {
+  grid-column: span 1; /* 每个按钮占据一个单元格 */
+  grid-row: 0 / 5; /* 第一行 */
+  margin-top: 0px; /* 添加上边距 */
+}
+
+.control-buttons .auto {
+  grid-column: 2 / 3; /* 第一列 */
+  grid-row: 2 / 3; /* 第二行 */
+}
+
+.control-buttons .reconnect {
+  grid-column: 1 / 2; /* 第二列 */
+  border-top-left-radius: 15px;/* 左上角加个弧度 */
+}
+
+.control-buttons .disconnect {
+  grid-column: 3 / 4; /* 第三列 */
+  border-top-right-radius: 15px;/* 右上角加个弧度 */
+}
+
+.batch-button {
+  margin: 5px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  font-size: 14px;
+}
+
+.batch-button:hover {
+  transform: scale(1.05);
+}
+
+.reconnect {
+  background-color: #555;
+  color: white;
+}
+
+.disconnect {
+  background-color: #444;
+  color: white;
+}
+
+.reconnect:hover {
+  background-color: #444;
+}
+
+.normal_btn{
+  background-color:  rgb(84, 84, 84, 0.1); 
+  color: white; 
+  padding: 10px 20px; 
+  border: 2px solid white; 
+  border-radius: 5px
+}
+
+.normal_btn:hover{
+  border: 2px solid rgb(138, 158, 237); 
+
+}
+
+.disconnect:hover {
+  background-color: #333;
+}
+
+
+img {
+  max-width: 100%; /* 确保图像不超出其父容器的宽度 */
+  height: auto; /* 保持图像的纵横比 */
+  display: block; /* 让图像成为块级元素，以便可以应用外部样式 */
+  margin: 0 auto; /* 水平居中 */
+  border-radius: 5px; /* 圆角 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+img:hover {
+  transform: scale(1.01); /* 鼠标悬停时放大图像 */
+}
+
+
+.image-container2 {
+  border: 2px solid #ccc; /* 边框 */
+  border-radius: 10px; /* 圆角 */
+  padding: 15px; /* 内间距 */
+  margin-bottom: 20px; /* 底部外间距 */
+  background-color: #272830; /* 背景色 */
+  color: white; /* 字体颜色 */
+}
+.scroll-container {
+  overflow-y: auto;
+  height: 100%; /* 根据需要调整 */
+}
+.image-container {
+  margin-bottom: 20px; /* 调整为你的需求 */
+  border: 1px solid #777; /* 可以调整边框颜色和样式 */
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #555;
+}
+.camera-index {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.image-display {
+  width: 100%;
+  max-width: 300px; /* 限定图像的最大宽度 */
+  margin-bottom: 10px;
+}
+
+.details {
+  border-top: 1px solid #ddd; /* 添加一个顶部分隔线 */
+  padding-top: 10px;
+}
+
+.details p {
+  margin: 5px 0; /* 每行的间距 */
+  white-space: normal; /* 确保文字换行 */
+}
+
+.image-display2 {
+  max-width: 90%; 
+  margin: 5% 5% 5% 5%;
+}
+.image-display2 {
+  width: 100%; /* 或者调整为合适的宽度 */
+  border-radius: 5px;
+}
+
+.image-container:hover {
+  border-color: #ddd; /* 鼠标悬停时的边框颜色 */
+}
+
+.image-container {
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+
+.image-container.selected {
+  border: 2px solid #4CAF50; /* 选中图片的样式 */
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.modal img {
+  max-width: 100%;
+  max-height: 80vh; 
+}
+
+.modal button {
+  margin-top: 10px;
+  background-color: #555;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition-duration: 0.4s;
+}
+
+.modal button:hover {
+  background-color: #666;
+}
+
+
+.unique-button-container {
+  display: flex;
+  justify-content: center; /* 水平居中对齐 */
+  gap: 20px; /* 按钮之间的间距 */
+  margin-top: 20px; /* 顶部外边距 */
+}
+
+.unique-button {
+  background-color: #555;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition-duration: 0.4s;
+}
+
+.unique-button:hover {
+  background-color: #666; /* 鼠标悬停时的背景色 */
+}
+
+
+.mmodal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.confidence-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.confidence-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confidence-controls {
+  display: flex;
+  align-items: center;
+}
+
+.confidence-controls button {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  margin: 0 5px;
+  border: none;
+  background-color: #ddd;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.confidence-controls button:hover {
+  background-color: #ccc;
+}
+
+.confidence-controls input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
